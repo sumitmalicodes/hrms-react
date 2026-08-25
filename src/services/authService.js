@@ -1,25 +1,48 @@
-import api from './api';
+import api from "./api";
+
 
 export const login = async (loginData) => {
-    const response = await api.post('/auth/login', loginData);
 
-    if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+    const response = await api.post(
+        "/Auth/Login",
+        loginData
+    );
+
+    const data = response.data;
+
+
+    if (data.isSuccess && data.token) {
+
+        localStorage.setItem(
+            "token",
+            data.token
+        );
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify(data)
+        );
     }
 
-    return response.data;
-}
+
+    return data;
+};
+
 
 export const logout = () => {
-    localStorage.removeItem('token');
-}
 
-export const getCurrentUser = async () => {
-    const response = await api.get('/auth/me');
-    return response.data;
-}
+    localStorage.removeItem("token");
 
-export const isAuthenticated = () => {
-    return !!localStorage.getItem('token');
-}
+    localStorage.removeItem("user");
+};
 
+
+export const getUser = () => {
+
+    const user =
+        localStorage.getItem("user");
+
+    return user
+        ? JSON.parse(user)
+        : null;
+};
